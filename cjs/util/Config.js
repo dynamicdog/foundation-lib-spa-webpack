@@ -31,7 +31,7 @@ class GlobalConfig {
         // Apply .env files and afterwards expand them
         this.getEnvFiles()
             .map(dotEnvFile => dotenv_1.default.config({ path: dotEnvFile }))
-            .forEach(x => dotenv_expand_1.default(x));
+            .forEach(x => (0, dotenv_expand_1.default)(x));
         // Create local env
         this._myEnv = {};
         Object.assign(this._myEnv, process.env, this._localOverrides);

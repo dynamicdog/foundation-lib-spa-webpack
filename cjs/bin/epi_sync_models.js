@@ -36,7 +36,7 @@ const esm = require('esm')(module, {});
 const syncModule = esm('./epi_sync_models.module');
 // Create context
 const defaultEnv = EpiEnvOptions_1.default.Parse(process.env.NODE_ENV || '', EpiEnvOptions_1.default.Development);
-const args = CliApplication.Setup(yargs_1.default(process.argv.slice(2)), defaultEnv, "Episerver Command Line Model Synchronization")
+const args = CliApplication.Setup((0, yargs_1.default)(process.argv.slice(2)), defaultEnv, "Episerver Command Line Model Synchronization")
     .argv;
 const config = CliApplication.CreateConfig(args);
 // Execute

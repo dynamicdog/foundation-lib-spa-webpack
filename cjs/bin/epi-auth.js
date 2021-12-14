@@ -142,7 +142,7 @@ const CliApplication = __importStar(require("../util/CliArguments"));
 // Read the Command Line arguments
 const defaultEnv = EpiEnvOptions_1.default.Parse(process.env.NODE_ENV || '', EpiEnvOptions_1.default.Development);
 const args = CliApplication
-    .Setup(yargs_1.default(process.argv.slice(2)), defaultEnv, "Optimizely CMS Login Script", cfg => cfg
+    .Setup((0, yargs_1.default)(process.argv.slice(2)), defaultEnv, "Optimizely CMS Login Script", cfg => cfg
     .alias('u', 'username')
     .describe('u', 'Insecurely pass username, only use from scripts that don\'t append to shell history')
     .string('u')

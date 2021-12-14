@@ -34,7 +34,7 @@ function PreLoadLoader(source) {
     // @ts-ignore: This is controlled by Webpack so allowing usage here
     const loaderContext = this;
     const options = loader_utils_1.default.getOptions(loaderContext);
-    schema_utils_1.validate(schema, options, { name: 'PreLoad loader' });
+    (0, schema_utils_1.validate)(schema, options, { name: 'PreLoad loader' });
     var test = /\@PreLoad\("(.*)"\,"(.*)"\,"(.*)"\)/;
     var matches = source.match(test);
     if (matches) {

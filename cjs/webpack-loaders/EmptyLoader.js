@@ -22,7 +22,7 @@ const schema = {
 const EmptyLoader = (source) => {
     const options = loader_utils_1.default.getOptions(this);
     if (options) {
-        schema_utils_1.validate(schema, options, { name: 'Empty loader' });
+        (0, schema_utils_1.validate)(schema, options, { name: 'Empty loader' });
     }
     return '';
 };
