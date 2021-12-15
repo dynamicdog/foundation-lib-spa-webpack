@@ -1,6 +1,6 @@
 {
   "name": "@episerver/webpack",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Episerver React SPA - Webpack add-ons",
   "homepage": "https://github.com/episerver/foundation-lib-spa-webpack",
   "bugs": "https://github.com/episerver/foundation-lib-spa-webpack/issues",
@@ -21,7 +21,7 @@
     "epi-sync-models": "cjs/bin/epi_sync_models.js"
   },
   "dependencies": {
-    "@episerver/spa-core": "github:dynamicdog/foundation-lib-spa-core#semver:0.1.6"
+    "@episerver/spa-core": "github:dynamicdog/foundation-lib-spa-core#semver:0.1.7"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.5.0",
@@ -51,7 +51,6 @@
     "yargs": "17.0.1"
   },
   "peerDependencies": {
-    "@episerver/spa-core": "github:dynamicdog/foundation-lib-spa-core#semver:0.1.6",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "esm": "^3.2.25",
