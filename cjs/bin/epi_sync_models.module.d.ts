@@ -1,18 +1,18 @@
-import { ContentDelivery } from '@episerver/spa-core';
-import GlobalConfig from '../util/Config';
+import { ContentDelivery } from "@episerver/spa-core";
+import GlobalConfig from "../util/Config";
 export declare type TypeOverviewResponse = TypeDefinition[];
 export declare type TypeDefinition = {
-    Name: string;
-    DisplayName: string;
-    Description: string;
-    GUID: string;
+    name: string;
+    displayName: string;
+    description: string;
+    guid: string;
 };
 export declare type TypeDefinitionData = TypeDefinition & {
-    Properties: {
-        Name: string;
-        DisplayName: string;
-        Description: string;
-        Type: string;
+    properties: {
+        name: string;
+        displayName: string;
+        description: string;
+        type: string;
     }[];
 };
 declare type internalAuthService = ContentDelivery.IAuthService & ContentDelivery.IAuthTokenProvider;
