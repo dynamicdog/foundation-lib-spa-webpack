@@ -46,7 +46,7 @@ function PreLoadLoader(source) {
         const component_prefix = matches[3];
         const component_dir = path_1.default.resolve(loaderContext.context, component_path);
         const files = glob_1.default.sync(component_dir + "/" + options.pattern, {
-            ignore: ["**/*.stories.tsx", "**/*.styles.tsx"],
+            ignore: ["**/*.stories.tsx", "**/*.styles.tsx", "**/*.style.tsx"],
         });
         //Debug
         console.log("  - Search pattern: " + component_dir + "/" + options.pattern);
