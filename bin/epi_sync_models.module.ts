@@ -1,8 +1,9 @@
 import fs from "fs";
+import os from "os";
 import path from "path";
 import { URL } from "url";
 
-const EOL = fs.EOL
+const EOL = os.EOL
 
 // Import from Spa Core
 import { Services, ContentDelivery } from "@episerver/spa-core";
@@ -142,7 +143,7 @@ export class EpiModelSync {
     mapper += `    /* webpackMode: "lazy-once" */${EOL}`;
     mapper += `    /* webpackPrefetch: true */${EOL}`;
     mapper += `    /* webpackPreload: false */${EOL}`;
-    mapper += '    "./" + typeInfo.dataModel).then(exports => {${EOL}`;
+    mapper += `    "./" + typeInfo.dataModel).then(exports => {${EOL}`;
     mapper += `      return exports[typeInfo.instanceModel];${EOL}`;
     mapper += `    }).catch(reason => {${EOL}`;
     mapper += `      if (Core.DefaultContext.isDebugActive()) {${EOL}`;
