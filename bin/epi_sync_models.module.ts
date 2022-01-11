@@ -115,48 +115,44 @@ export class EpiModelSync {
    */
   protected createAsyncTypeMapper(allItemNames: string[]): void {
     const mapperFile = path.join(this.getModelPath(), "TypeMapper.ts");
-    let mapper =
-      `import { Taxonomy, Core, Loaders } from '@episerver/spa-core';${EOL}`;
-    // allItemNames.forEach(x => mapper += "import {"+this.getModelInstanceName(x)+"} from './"+ this.getModelInterfaceName(x)+`';${EOL}`)
-    mapper +=
-      `${EOL}export default class TypeMapper extends Loaders.BaseTypeMapper {${EOL}`;
-    mapper += `  protected map : { [type: string]: Loaders.TypeInfo } = {${EOL}`;
+    const lines: string[] = []
+
+    lines.push("import { Taxonomy, Core, Loaders } from '@episerver/spa-core';");
+    lines.push("");
+    // allItemNames.forEach(x => mapper.push( "import {"+this.getModelInstanceName(x)+"} from './"+ this.getModelInterfaceName(x)+`';${EOL}`)
+    lines.push("export default class TypeMapper extends Loaders.BaseTypeMapper {");
+    lines.push( "  protected map : { [type: string]: Loaders.TypeInfo } = {");
     allItemNames.forEach(
-      (x) =>
-        (mapper +=
-          "    '" +
-          x +
-          "': {dataModel: '" +
-          this.getModelInterfaceName(x) +
-          "',instanceModel: '" +
-          this.getModelInstanceName(x) +
-          `'},${EOL}`)
+      (x) => lines.push(`    '${x}': {dataModel: '${this.getModelInterfaceName(x)}',instanceModel: '${this.getModelInstanceName(x)}'},`)
     );
-    mapper += `  }${EOL}`;
+    lines.push( "  }");
 
-    mapper +=
-      `  protected async doLoadType(typeInfo: Loaders.TypeInfo) : Promise<Taxonomy.IContentType> {${EOL}`;
-    mapper += `    return import(${EOL}`;
-    mapper += `    /* webpackInclude: /\\.ts$/ */${EOL}`;
-    mapper += `    /* webpackExclude: /\\.noimport\\.ts$/ */${EOL}`;
-    mapper += `    /* webpackChunkName: "types" */${EOL}`;
-    mapper += `    /* webpackMode: "lazy-once" */${EOL}`;
-    mapper += `    /* webpackPrefetch: true */${EOL}`;
-    mapper += `    /* webpackPreload: false */${EOL}`;
-    mapper += `    "./" + typeInfo.dataModel).then(exports => {${EOL}`;
-    mapper += `      return exports[typeInfo.instanceModel];${EOL}`;
-    mapper += `    }).catch(reason => {${EOL}`;
-    mapper += `      if (Core.DefaultContext.isDebugActive()) {${EOL}`;
-    mapper +=
-      `        console.error(\`Error while importing \${typeInfo.instanceModel} from \${typeInfo.dataModel} due to:\`, reason);${EOL}`;
-    mapper += `      }${EOL}`;
-    mapper += `      return null;${EOL}`;
-    mapper += `    });${EOL}`;
-    mapper += `  }${EOL}`;
+    lines.push("  protected async doLoadType(typeInfo: Loaders.TypeInfo) : Promise<Taxonomy.IContentType> {");
+    lines.push("    return import(");
+    lines.push("    /* webpackInclude: /\\.ts$/ */");
+    lines.push("    /* webpackExclude: /\\.noimport\\.ts$/ */");
+    lines.push('    /* webpackChunkName: "types" */');
+    lines.push('    /* webpackMode: "lazy-once" */');
+    lines.push("    /* webpackPrefetch: true */");
+    lines.push("    /* webpackPreload: false */");
+    lines.push('    "./" + typeInfo.dataModel).then(exports => {');
+    lines.push("      return exports[typeInfo.instanceModel];");
+    lines.push("    }).catch(reason => {");
+    lines.push("      if (Core.DefaultContext.isDebugActive()) {");
+    lines.push("        console.error(`Error while importing ${typeInfo.instanceModel} from ${typeInfo.dataModel} due to:`, reason);");
+    lines.push("      }");
+    lines.push("      return null;");
+    lines.push("    });");
+    lines.push("  }");
 
-    mapper += `}${EOL}`;
+    lines.push("}");
 
-    fs.writeFile(mapperFile, mapper, () => {
+    // last empty line
+    lines.push("");
+
+    const content = lines.join(EOL)
+
+    fs.writeFile(mapperFile, content, () => {
       console.log(" - Written type mapper");
     });
   }
@@ -185,104 +181,90 @@ export class EpiModelSync {
         const instanceName = me.getModelInstanceName(info.name);
         const fileName = interfaceName + ".ts";
 
+        const lines: string[] = [];
+
         // Imports
-        let iface =
-          `import { ContentDelivery, Taxonomy, ComponentTypes } from '@episerver/spa-core'${EOL}`;
+        lines.push("import { ContentDelivery, Taxonomy, ComponentTypes } from '@episerver/spa-core'");
 
         // Heading
-        iface +=
+        lines.push(
           `/**${EOL} * ` +
           (info.displayName ? info.displayName : info.name) +
           `${EOL} *${EOL} * ` +
           (info.description ? info.description : "No Description available.") +
           `${EOL} *${EOL} * @GUID ` +
           info.guid +
-          `${EOL} */${EOL}`;
+          `${EOL} */`);
 
         // Actual interface
-        iface +=
-          "export default interface " +
-          interfaceName +
-          ` extends Taxonomy.IContent {${EOL}`;
+        lines.push(`export default interface ${interfaceName} extends Taxonomy.IContent {`);
+
         info.properties.forEach((prop) => {
           const propName = me.processFieldName(prop.name);
           if (!me._iContentProps.includes(propName)) {
-            iface +=
+            lines.push(
               `    /**${EOL}     * ` +
               (prop.displayName ? prop.displayName : prop.name) +
               `${EOL}     *${EOL}     * ` +
               (prop.description
                 ? prop.description
                 : "No description available") +
-              `${EOL}     */${EOL}`;
-            iface +=
+              `${EOL}     */`);
+            lines.push(
               "    " +
               propName +
               ": " +
               me.ConvertTypeToSpaProperty(prop.type, allItemNames) +
-              `${EOL}${EOL}`;
+              `${EOL}`);
 
             if (allItemNames.includes(prop.type)) {
-              iface =
-                "import " +
-                prop.type +
-                "Data from './" +
-                prop.type +
-                `Data'${EOL}` +
-                iface;
+              lines.unshift(
+                `import ${prop.type}Data from './${prop.type}Data'`
+              );
             }
           }
         });
-        iface += `}${EOL}${EOL}`;
+        lines.push( `}${EOL}`);
 
         // Convenience interface
-        iface +=
-          `/**${EOL} * Convenience interface for componentDidUpdate & componentDidMount methods.${EOL} */${EOL}`;
-        iface +=
-          "export interface " +
-          propsInterfaceName +
-          " extends ComponentTypes.AbstractComponentProps<" +
-          interfaceName +
-          `> {}${EOL}${EOL}`;
+        lines.push(`/**${EOL} * Convenience interface for componentDidUpdate & componentDidMount methods.${EOL} */`);
+        lines.push(`export interface ${propsInterfaceName} extends ComponentTypes.AbstractComponentProps<${interfaceName}> {}${EOL}`);
 
         // Instance type
-        iface +=
-          "export class " +
-          instanceName +
-          " extends Taxonomy.AbstractIContent<" +
-          interfaceName +
-          "> implements " +
-          interfaceName +
-          ` {${EOL}`;
-        iface += '    protected _typeName : string = "' + info.name + `";${EOL}`;
-        iface +=
-          `    /**${EOL}     * Map of all property types within this content type.${EOL}     */${EOL}`;
-        iface +=
-          `    protected _propertyMap : { [propName: string]: string } = {${EOL}`;
+        lines.push(`export class ${instanceName} extends Taxonomy.AbstractIContent<${interfaceName}> implements ${interfaceName} {`);
+        lines.push(`    protected _typeName : string = "${info.name}";`);
+        lines.push(`    /**${EOL}     * Map of all property types within this content type.${EOL}     */`);
+        lines.push("    protected _propertyMap : { [propName: string]: string } = {");
         info.properties.forEach((prop) => {
           const propName = me.processFieldName(prop.name);
-          iface += "        '" + propName + "': '" + prop.type + `',${EOL}`;
+          lines.push(`        '${propName}': '${prop.type}',`);
         });
-        iface += `    }${EOL}${EOL}`;
+
+        lines.push( `    }${EOL}`);
         info.properties.forEach((prop) => {
           const propName = me.processFieldName(prop.name);
           if (!me._iContentProps.includes(propName)) {
-            iface +=
+            lines.push(
               `    /**${EOL}     * ` +
               (prop.displayName ? prop.displayName : prop.name) +
               `${EOL}     *${EOL}     * ` +
               (prop.description
                 ? prop.description
                 : "No description available") +
-              `${EOL}     */${EOL}`;
-            iface += `    public get ${propName}() : ${interfaceName}["${propName}"] { return this.getProperty("${propName}"); }${EOL}${EOL}`;
+              `${EOL}     */`);
+            lines.push( `    public get ${propName}() : ${interfaceName}["${propName}"] { return this.getProperty("${propName}"); }${EOL}`);
           }
         });
-        iface += `}${EOL}`;
+        lines.push( "}");
+
+        // last empty line
+        lines.push("");
+
+        const content = lines.join(EOL);
 
         // Write interface
         const fullTarget = path.join(me.getModelPath(), fileName);
-        fs.writeFile(fullTarget, iface, () => {
+        fs.writeFile(fullTarget, content, () => {
           console.log("   - " + interfaceName + " written to " + fullTarget);
         });
       }
