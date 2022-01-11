@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import { URL } from "url";
 
+const EOL = fs.EOL
+
 // Import from Spa Core
 import { Services, ContentDelivery } from "@episerver/spa-core";
 const StringUtils = Services.String;
@@ -113,11 +115,11 @@ export class EpiModelSync {
   protected createAsyncTypeMapper(allItemNames: string[]): void {
     const mapperFile = path.join(this.getModelPath(), "TypeMapper.ts");
     let mapper =
-      "import { Taxonomy, Core, Loaders } from '@episerver/spa-core';\n";
-    // allItemNames.forEach(x => mapper += "import {"+this.getModelInstanceName(x)+"} from './"+ this.getModelInterfaceName(x)+"';\n")
+      `import { Taxonomy, Core, Loaders } from '@episerver/spa-core';${EOL}`;
+    // allItemNames.forEach(x => mapper += "import {"+this.getModelInstanceName(x)+"} from './"+ this.getModelInterfaceName(x)+`';${EOL}`)
     mapper +=
-      "\nexport default class TypeMapper extends Loaders.BaseTypeMapper {\n";
-    mapper += "  protected map : { [type: string]: Loaders.TypeInfo } = {\n";
+      `${EOL}export default class TypeMapper extends Loaders.BaseTypeMapper {${EOL}`;
+    mapper += `  protected map : { [type: string]: Loaders.TypeInfo } = {${EOL}`;
     allItemNames.forEach(
       (x) =>
         (mapper +=
@@ -127,31 +129,31 @@ export class EpiModelSync {
           this.getModelInterfaceName(x) +
           "',instanceModel: '" +
           this.getModelInstanceName(x) +
-          "'},\n")
+          `'},${EOL}`)
     );
-    mapper += "  }\n";
+    mapper += `  }${EOL}`;
 
     mapper +=
-      "  protected async doLoadType(typeInfo: Loaders.TypeInfo) : Promise<Taxonomy.IContentType> {\n";
-    mapper += "    return import(\n";
-    mapper += "    /* webpackInclude: /\\.ts$/ */\n";
-    mapper += "    /* webpackExclude: /\\.noimport\\.ts$/ */\n";
-    mapper += '    /* webpackChunkName: "types" */\n';
-    mapper += '    /* webpackMode: "lazy-once" */\n';
-    mapper += "    /* webpackPrefetch: true */\n";
-    mapper += "    /* webpackPreload: false */\n";
-    mapper += '    "./" + typeInfo.dataModel).then(exports => {\n';
-    mapper += "      return exports[typeInfo.instanceModel];\n";
-    mapper += "    }).catch(reason => {\n";
-    mapper += "      if (Core.DefaultContext.isDebugActive()) {\n";
+      `  protected async doLoadType(typeInfo: Loaders.TypeInfo) : Promise<Taxonomy.IContentType> {${EOL}`;
+    mapper += `    return import(${EOL}`;
+    mapper += `    /* webpackInclude: /\\.ts$/ */${EOL}`;
+    mapper += `    /* webpackExclude: /\\.noimport\\.ts$/ */${EOL}`;
+    mapper += `    /* webpackChunkName: "types" */${EOL}`;
+    mapper += `    /* webpackMode: "lazy-once" */${EOL}`;
+    mapper += `    /* webpackPrefetch: true */${EOL}`;
+    mapper += `    /* webpackPreload: false */${EOL}`;
+    mapper += '    "./" + typeInfo.dataModel).then(exports => {${EOL}`;
+    mapper += `      return exports[typeInfo.instanceModel];${EOL}`;
+    mapper += `    }).catch(reason => {${EOL}`;
+    mapper += `      if (Core.DefaultContext.isDebugActive()) {${EOL}`;
     mapper +=
-      "        console.error(`Error while importing ${typeInfo.instanceModel} from ${typeInfo.dataModel} due to:`, reason);\n";
-    mapper += "      }\n";
-    mapper += "      return null;\n";
-    mapper += "    });\n";
-    mapper += "  }\n";
+      `        console.error(\`Error while importing \${typeInfo.instanceModel} from \${typeInfo.dataModel} due to:\`, reason);${EOL}`;
+    mapper += `      }${EOL}`;
+    mapper += `      return null;${EOL}`;
+    mapper += `    });${EOL}`;
+    mapper += `  }${EOL}`;
 
-    mapper += "}\n";
+    mapper += `}${EOL}`;
 
     fs.writeFile(mapperFile, mapper, () => {
       console.log(" - Written type mapper");
@@ -184,40 +186,40 @@ export class EpiModelSync {
 
         // Imports
         let iface =
-          "import { ContentDelivery, Taxonomy, ComponentTypes } from '@episerver/spa-core'\n";
+          `import { ContentDelivery, Taxonomy, ComponentTypes } from '@episerver/spa-core'${EOL}`;
 
         // Heading
         iface +=
-          "/**\n * " +
+          `/**${EOL} * ` +
           (info.displayName ? info.displayName : info.name) +
-          "\n *\n * " +
+          `${EOL} *${EOL} * ` +
           (info.description ? info.description : "No Description available.") +
-          "\n *\n * @GUID " +
+          `${EOL} *${EOL} * @GUID ` +
           info.guid +
-          "\n */\n";
+          `${EOL} */${EOL}`;
 
         // Actual interface
         iface +=
           "export default interface " +
           interfaceName +
-          " extends Taxonomy.IContent {\n";
+          ` extends Taxonomy.IContent {${EOL}`;
         info.properties.forEach((prop) => {
           const propName = me.processFieldName(prop.name);
           if (!me._iContentProps.includes(propName)) {
             iface +=
-              "    /**\n     * " +
+              `    /**${EOL}     * ` +
               (prop.displayName ? prop.displayName : prop.name) +
-              "\n     *\n     * " +
+              `${EOL}     *${EOL}     * ` +
               (prop.description
                 ? prop.description
                 : "No description available") +
-              "\n     */\n";
+              `${EOL}     */${EOL}`;
             iface +=
               "    " +
               propName +
               ": " +
               me.ConvertTypeToSpaProperty(prop.type, allItemNames) +
-              "\n\n";
+              `${EOL}${EOL}`;
 
             if (allItemNames.includes(prop.type)) {
               iface =
@@ -225,22 +227,22 @@ export class EpiModelSync {
                 prop.type +
                 "Data from './" +
                 prop.type +
-                "Data'\n" +
+                `Data'${EOL}` +
                 iface;
             }
           }
         });
-        iface += "}\n\n";
+        iface += `}${EOL}${EOL}`;
 
         // Convenience interface
         iface +=
-          "/**\n * Convenience interface for componentDidUpdate & componentDidMount methods.\n */\n";
+          `/**${EOL} * Convenience interface for componentDidUpdate & componentDidMount methods.${EOL} */${EOL}`;
         iface +=
           "export interface " +
           propsInterfaceName +
           " extends ComponentTypes.AbstractComponentProps<" +
           interfaceName +
-          "> {}\n\n";
+          `> {}${EOL}${EOL}`;
 
         // Instance type
         iface +=
@@ -250,32 +252,32 @@ export class EpiModelSync {
           interfaceName +
           "> implements " +
           interfaceName +
-          " {\n";
-        iface += '    protected _typeName : string = "' + info.name + '";\n';
+          ` {${EOL}`;
+        iface += '    protected _typeName : string = "' + info.name + `";${EOL}`;
         iface +=
-          "    /**\n     * Map of all property types within this content type.\n     */\n";
+          `    /**${EOL}     * Map of all property types within this content type.${EOL}     */${EOL}`;
         iface +=
-          "    protected _propertyMap : { [propName: string]: string } = {\n";
+          `    protected _propertyMap : { [propName: string]: string } = {${EOL}`;
         info.properties.forEach((prop) => {
           const propName = me.processFieldName(prop.name);
-          iface += "        '" + propName + "': '" + prop.type + "',\n";
+          iface += "        '" + propName + "': '" + prop.type + `',${EOL}`;
         });
-        iface += "    }\n\n";
+        iface += `    }${EOL}${EOL}`;
         info.properties.forEach((prop) => {
           const propName = me.processFieldName(prop.name);
           if (!me._iContentProps.includes(propName)) {
             iface +=
-              "    /**\n     * " +
+              `    /**${EOL}     * ` +
               (prop.displayName ? prop.displayName : prop.name) +
-              "\n     *\n     * " +
+              `${EOL}     *${EOL}     * ` +
               (prop.description
                 ? prop.description
                 : "No description available") +
-              "\n     */\n";
-            iface += `    public get ${propName}() : ${interfaceName}["${propName}"] { return this.getProperty("${propName}"); }\n\n`;
+              `${EOL}     */${EOL}`;
+            iface += `    public get ${propName}() : ${interfaceName}["${propName}"] { return this.getProperty("${propName}"); }${EOL}${EOL}`;
           }
         });
-        iface += "}\n";
+        iface += `}${EOL}`;
 
         // Write interface
         const fullTarget = path.join(me.getModelPath(), fileName);
@@ -425,7 +427,7 @@ export class EpiModelSync {
       .then((r) => (isNetworkErrorResponse(r[0]) ? null : r[0]))
       .catch((e) => {
         console.error(
-          `\n\n\x1b[31m  !!! Error while fetching ${url}: ${
+          `${EOL}${EOL}\x1b[31m  !!! Error while fetching ${url}: ${
             e?.message || e
           } !!!\x1b[0m`
         );
