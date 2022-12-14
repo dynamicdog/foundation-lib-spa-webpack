@@ -48,7 +48,7 @@ function isNetworkErrorResponse(
  */
 export class EpiModelSync {
   protected _modelDir: Readonly<string> = "src/Models/Episerver";
-  protected _servicePath: Readonly<string> = "api/episerver/v3/model";
+  protected _servicePath: Readonly<string> = "api/haldex/v1.0/cda/v3/model";
   protected _rootDir: string;
   protected _config: GlobalConfig;
   protected _iContentProps: string[] = ["contentLink"];

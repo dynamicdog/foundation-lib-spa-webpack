@@ -1,5 +1,5 @@
 import { DelegatedPlugin as Plugin, Compiler } from 'webpack';
-export declare type DeployToEpiserverPluginOptions = {
+export type DeployToEpiserverPluginOptions = {
     base: string;
     filepath: string;
     filename: string;

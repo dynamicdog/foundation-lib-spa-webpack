@@ -15,6 +15,11 @@ const crypto_1 = __importDefault(require("crypto"));
  * @implements { epi.ContentDelivery.IAuthStorage }
  */
 class ClientAuthStorage {
+    static CreateFromUrl(u) {
+        const hash = crypto_1.default.createHash('sha256');
+        hash.update(u.host);
+        return new ClientAuthStorage(hash.digest('hex'));
+    }
     /**
      *
      * @param {string} [scope] The scope for the file name
@@ -39,11 +44,6 @@ class ClientAuthStorage {
         this._filePostFix = '';
         this._homeDir = os_1.default.homedir();
         this._filePostFix = scope || '';
-    }
-    static CreateFromUrl(u) {
-        const hash = crypto_1.default.createHash('sha256');
-        hash.update(u.host);
-        return new ClientAuthStorage(hash.digest('hex'));
     }
     /**
      * @returns { boolean }

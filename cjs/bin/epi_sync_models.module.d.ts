@@ -1,13 +1,13 @@
 import { ContentDelivery } from "@episerver/spa-core";
 import GlobalConfig from "../util/Config";
-export declare type TypeOverviewResponse = TypeDefinition[];
-export declare type TypeDefinition = {
+export type TypeOverviewResponse = TypeDefinition[];
+export type TypeDefinition = {
     name: string;
     displayName: string;
     description: string;
     guid: string;
 };
-export declare type TypeDefinitionData = TypeDefinition & {
+export type TypeDefinitionData = TypeDefinition & {
     properties: {
         name: string;
         displayName: string;
@@ -15,7 +15,7 @@ export declare type TypeDefinitionData = TypeDefinition & {
         type: string;
     }[];
 };
-declare type internalAuthService = ContentDelivery.IAuthService & ContentDelivery.IAuthTokenProvider;
+type internalAuthService = ContentDelivery.IAuthService & ContentDelivery.IAuthTokenProvider;
 /**
  * Episerver Model Synchronization Job
  */

@@ -35,7 +35,7 @@ class EpiModelSync {
      */
     constructor(config) {
         this._modelDir = "src/Models/Episerver";
-        this._servicePath = "api/episerver/v3/model";
+        this._servicePath = "api/haldex/v1.0/cda/v3/model";
         this._iContentProps = ["contentLink"];
         this._config = config;
         this._rootDir = config.getRootDir();

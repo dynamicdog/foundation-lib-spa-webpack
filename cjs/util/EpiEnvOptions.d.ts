@@ -11,5 +11,5 @@ export declare class EpiEnvOptions {
      */
     static Parse<T extends EpiEnvOption | undefined>(strValue: string, defaultValue: T): Readonly<EpiEnvOption | T>;
 }
-export declare type EpiEnvOption = "development" | "integration" | "preproduction" | "production";
+export type EpiEnvOption = "development" | "integration" | "preproduction" | "production";
 export default EpiEnvOptions;

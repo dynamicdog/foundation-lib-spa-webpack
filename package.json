@@ -1,6 +1,6 @@
 {
   "name": "@episerver/webpack",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Episerver React SPA - Webpack add-ons",
   "homepage": "https://github.com/episerver/foundation-lib-spa-webpack",
   "bugs": "https://github.com/episerver/foundation-lib-spa-webpack/issues",
